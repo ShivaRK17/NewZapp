@@ -1,10 +1,23 @@
 import React, { Component } from 'react'
 import NewsItem from './NewsItem'
 import Spinner from './Spinner';
+import PropTypes from 'prop-types'
 
-// https://newsapi.org/v2/top-headlines?country=in&apiKey=ead588ece4d44a349a68f4e29090f4a8
+// https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=ead588ece4d44a349a68f4e29090f4a8
 
 export class News extends Component {
+    static defaultProps = {
+        country:'in',
+        pageSize :12,
+        category:'general'
+    }
+    static propTypes = {
+        country:PropTypes.string.isRequired,
+        pageSize:PropTypes.number.isRequired,
+        category:PropTypes.string.isRequired
+    }
+
+
     constructor(){
         super();
         this.state = {
@@ -15,7 +28,7 @@ export class News extends Component {
         }
     }
     async componentDidMount(){
-        let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=ead588ece4d44a349a68f4e29090f4a8&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=ead588ece4d44a349a68f4e29090f4a8&page=${this.state.page}&pageSize=${this.props.pageSize}`;
         this.setState({loading:true})
         let data = fetch(url);
         data.then((val)=>{
@@ -25,7 +38,7 @@ export class News extends Component {
         })
     }
     handlePrev = async ()=>{
-        let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=ead588ece4d44a349a68f4e29090f4a8&page=${this.state.page-1}&pageSize=${this.props.pageSize}`;
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=ead588ece4d44a349a68f4e29090f4a8&page=${this.state.page-1}&pageSize=${this.props.pageSize}`;
         this.setState({loading:true})
         let data = fetch(url);
         data.then((val)=>{
@@ -36,7 +49,7 @@ export class News extends Component {
         this.setState({page:this.state.page-1})
     }
     handleNext = async ()=>{
-        let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=ead588ece4d44a349a68f4e29090f4a8&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=ead588ece4d44a349a68f4e29090f4a8&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
         this.setState({loading:true})
         let data = await fetch(url);
         let parsedData = await data.json();
@@ -54,7 +67,7 @@ export class News extends Component {
             <div className="row">
                 {this.state.loading || this.state.articles.map((e)=>{
                     return <div className="col-md-4" key={e.url?e.url:""}>
-                        <NewsItem  title={e.title?e.title:""} description={e.description?e.description:""} imgUrl ={e.urlToImage?e.urlToImage:`https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/The_Indianapolis_Star%2C_2011.jpg/2000px-The_Indianapolis_Star%2C_2011.jpg`} newsUrl={e.url?e.url:""}/>
+                        <NewsItem  title={e.title?e.title:""} description={e.description?e.description:""} imgUrl ={e.urlToImage?e.urlToImage:`https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/The_Indianapolis_Star%2C_2011.jpg/2000px-The_Indianapolis_Star%2C_2011.jpg`} source={e.source.name} newsAuthor={e.author} newsDate={e.publishedAt} newsUrl={e.url?e.url:""}/>
                         </div>
                 })}
                 {/* <div className="col-md-4">
